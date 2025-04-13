@@ -1,0 +1,11 @@
+# 機密情報
+.env
+
+# 一時ファイルやツール
+git-filter-repo
+
+# その他おすすめ
+__pycache__/
+*.pyc
+*.log
+.DS_Store
