@@ -1,20 +1,27 @@
-import os
-from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
+from flask import Flask, request, jsonify, render_template_string
 import openai
+import os
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
-# .envファイルからAPIキーを読み込む
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Flaskアプリケーションの初期化
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = '/tmp'
 
+# HTML付きのトップページ
 @app.route('/', methods=['GET'])
 def index():
-    return 'Flask app is running on Render!'
+    return render_template_string("""
+    <!doctype html>
+    <title>Whisper Transcriber</title>
+    <h1>音声ファイルをアップロード</h1>
+    <form method=post enctype=multipart/form-data action="/transcribe">
+      <input type=file name=file>
+      <input type=submit value=アップロード>
+    </form>
+    """)
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
@@ -37,8 +44,8 @@ def transcribe():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# 🔥 Render対応の起動設定（PORTとhostを必ず指定）
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
+
 
